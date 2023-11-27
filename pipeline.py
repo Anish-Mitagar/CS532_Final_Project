@@ -11,15 +11,20 @@ import os
 results = {}
 scale = os.getenv('SCALE', "local")
 
+os.chdir("/opt/application") #docker only
+
 for iter in range (1):
 
     print(f"Running iter {iter + 1}")
+
+   
 
     # Initialize Spark Session
     spark = SparkSession.builder.appName("DiabetesPredictionPipeline").getOrCreate()
 
     # Load the dataset
-    data_path = "diabetes_prediction_dataset.csv"
+    data_path = "file:///opt/application/diabetes_prediction_dataset.csv" #docker only
+    #data_path = "diabetes_prediction_dataset.csv" #local only
     df = spark.read.csv(data_path, header=True, inferSchema=True)
 
     # Columns for features and label
@@ -112,7 +117,7 @@ for iter in range (1):
 df = pd.DataFrame(results)
 
 # Save to a CSV file
-# docker
-# df.to_csv(f"/opt/spark-data/results_num_node_{scale}.csv", index=False)
-# local
-df.to_csv(f"results_num_node_{scale}.csv", index=False)
+
+df.to_csv(f"./spark-data/results_num_node_{scale}.csv", index=False) #docker only 
+
+# df.to_csv(f"results_num_node_{scale}.csv", index=False) #local only

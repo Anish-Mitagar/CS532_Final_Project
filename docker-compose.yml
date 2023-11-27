@@ -3,7 +3,9 @@ version: '3'
 services:
   spark-master:
     image: my-spark-image
-    command: spark/bin/spark-class org.apache.spark.deploy.master.Master -h spark-master
+    command: > 
+      sh -c "spark/bin/spark-class org.apache.spark.deploy.master.Master -h spark-master &&
+            python3 /opt/application/pipeline.py"
     hostname: spark-master
     ports:
       - "7077:7077"
@@ -25,7 +27,9 @@ services:
 
   spark-worker:
     image: my-spark-image
-    command: spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
+    command: >
+      sh -c "spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077 &&
+            python3 /opt/application/pipeline.py"
     depends_on:
       - spark-master
     volumes:
