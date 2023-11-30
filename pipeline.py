@@ -119,5 +119,5 @@ df = pd.DataFrame(results)
 # Save to a CSV file
 
 df.to_csv(f"./spark-data/results_num_node_{scale}.csv", index=False) #docker only 
-
+print(total_time)
 # df.to_csv(f"results_num_node_{scale}.csv", index=False) #local only

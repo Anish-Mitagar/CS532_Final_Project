@@ -2,47 +2,48 @@ version: '3'
 
 services:
   spark-master:
+    container_name: spark-master
     image: my-spark-image
-    command: > 
-      sh -c "spark/bin/spark-class org.apache.spark.deploy.master.Master -h spark-master &&
-            python3 /opt/application/pipeline.py"
+    command: spark/bin/spark-class org.apache.spark.deploy.master.Master -h spark-master #> 
+      # sh -c "spark/bin/spark-class org.apache.spark.deploy.master.Master -h spark-master &&
+      #       python3 /opt/application/pipeline.py"
     hostname: spark-master
     ports:
       - "7077:7077"
       - "8080:8080"
     volumes:
-      - ./data:/opt/spark-data  # Mount for CSV output and other data files
+      - ./data:/opt/application/spark-data  # Mount for CSV output and other data files
       - ./pipeline.py:/opt/application/pipeline.py  # Mount for your Python script
       - ./diabetes_prediction_dataset.csv:/opt/application/diabetes_prediction_dataset.csv #Mount for your csv data
     environment:
       - SCALE=${SCALE}
-    deploy:
-      resources:
-        limits:
-          cpus: "0.5"
-          memory: 1G
-        reservations:
-          cpus: "0.25"
-          memory: 512M
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: "0.5"
+    #       memory: 1G
+    #     reservations:
+    #       cpus: "0.25"
+    #       memory: 512M
 
   spark-worker:
     image: my-spark-image
-    command: >
-      sh -c "spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077 &&
-            python3 /opt/application/pipeline.py"
+    command: spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077 #>
+      # sh -c "spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077 &&
+      #       python3 /opt/application/pipeline.py"
     depends_on:
       - spark-master
     volumes:
-      - ./data:/opt/spark-data  # Mount for CSV output and other data files
+      - ./data:/opt/application/spark-data  # Mount for CSV output and other data files
       - ./pipeline.py:/opt/application/pipeline.py  # Mount for your Python script
       - ./diabetes_prediction_dataset.csv:/opt/application/diabetes_prediction_dataset.csv #Mount for your csv data
     environment:
       - SCALE=${SCALE}
-    deploy:
-      resources:
-        limits:
-          cpus: "0.5"
-          memory: 1G
-        reservations:
-          cpus: "0.25"
-          memory: 512M
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: "1"
+    #       memory: 1G
+        # reservations:
+        #   cpus: "0.25"
+        #   memory: 512M
