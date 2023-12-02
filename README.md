@@ -15,7 +15,7 @@ This project demostrates the effect Horizontal Scaling in the Distributed Comput
 ### Model Training
 
 #### The Dataset: Diabetes Diagnosis
-
+The Diabetes prediction dataset is a collection of medical and demographic data from patients, along with their diabetes status (positive or negative). The data includes features such as age, gender, body mass index (BMI), hypertension, heart disease, smoking history, HbA1c level, and blood glucose level. We chose this dataset from Kaggle as the data for each parameter is varied enough for it to be preprocessed.
 ![Alt text](https://scitechdaily.com/images/Diabetes-Treatments.jpg)
 
 #### The Model Family: Random Forests (Classification)
