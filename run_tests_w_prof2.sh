@@ -1,4 +1,5 @@
-for scale in 1 2 3 4 5 6 7 8
+rm -rf "./_profiles"/*
+for scale in 1
 do
     echo "Running experiment with scale = $scale"
 
@@ -11,7 +12,7 @@ do
     echo "Running Spark Job..."
 
     # Submit the Spark job to the cluster
-    docker exec spark-master spark-submit --master spark://spark-master:7077 --deploy-mode client ./opt/application/pipeline.py > /dev/null 2>&1
+    docker exec spark-master spark-submit --master spark://spark-master:7077 --deploy-mode client ./opt/application/pipeline_w_prof2.py > /dev/null 2>&1
 
     # Shut down the Docker containers
     docker-compose down

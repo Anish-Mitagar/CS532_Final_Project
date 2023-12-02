@@ -1,2 +1,0 @@
-Preprocessing Stage 1: StringIndexer,Preprocessing Stage 2: OneHotEncoder,Preprocessing Stage 3: StringIndexer,Preprocessing Stage 4: OneHotEncoder,Preprocessing Stage 5: VectorAssembler,Preprocessing Stage 6: StandardScaler,Preprocessing Stage 7: VectorAssembler,CrossValidator,Total Time
-0.9125509589998728,0.04564733299980617,1.6560641250000572,0.023509207999950377,0.021398999999973967,0.7062485000001288,0.013062792000027912,25.941364220999958,29.319846137999775

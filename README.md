@@ -4,7 +4,7 @@
 
 ## ML Pipeline Execution Time versus Horizontal Scaling
 
-This project demostrates the effect Horizontal Scaling in the Distributed Computing Set Up has on the execution time of several stages of the ML Pipeline. Every stage of the ML Pipeline ulilizes a Spark Job/Function form the PySpark library.
+This project demostrates the effect Horizontal Scaling in the Distributed Computing Set Up has on the execution time of several stages of the ML Pipeline. Every stage of the ML Pipeline ulilizes a Spark Job/Function from the PySpark library.
 
 ![Alt text](https://www.matridtech.net/wp-content/uploads/2020/07/Horizontal-Scaling.png)
 

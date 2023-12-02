@@ -23,5 +23,9 @@ ENV PATH=$PATH:$SPARK_HOME/bin
 
 COPY ./pipeline.py /opt/application/pipeline.py
 COPY ./diabetes_prediction_dataset.csv /opt/application/diabetes_prediction_dataset.csv
+COPY ./pipeline_w_prof.py /opt/application/pipeline_w_prof.py
+COPY ./pipeline_w_prof2.py /opt/application/pipeline_w_prof2.py
+COPY ./profilerdeck.py /opt/application/profilerdeck.py
 RUN mkdir /opt/application/spark-data
+RUN mkdir /opt/application/_profiles
 

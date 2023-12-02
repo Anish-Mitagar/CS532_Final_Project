@@ -8,12 +8,37 @@ from pyspark.ml.evaluation import MulticlassClassificationEvaluator
 import pandas as pd
 import os
 
+from profilerdeck import profile
+
+
+@profile
+def benchmark_preprocessing_stage(stage, df):
+    start_time = time.perf_counter()
+        
+    # For estimators (like StringIndexer, OneHotEncoder, and StandardScaler), fit and then transform
+    if isinstance(stage, StringIndexer) or isinstance(stage, OneHotEncoder) or isinstance(stage, StandardScaler):
+        model = stage.fit(df)
+        df = model.transform(df)
+    else:  # For transformers (like VectorAssembler), just transform
+        df = stage.transform(df)
+
+    end_time = time.perf_counter()
+
+    return end_time - start_time, df
+
+@profile
+def benchmark_validator_stage(crossval, df):
+    start_time = time.perf_counter()
+    cvModel = crossval.fit(df)
+    end_time = time.perf_counter()
+    return end_time - start_time, cvModel
+
 results = {}
 scale = os.getenv('SCALE', "local")
 
 os.chdir("/opt/application") #docker only
 
-for iter in range (50):
+for iter in range (1):
 
     print(f"Running iter {iter + 1}")
 
@@ -56,18 +81,9 @@ for iter in range (50):
     i = 1
     # Apply each stage manually and time them
     for stage in stages:
-        start_time = time.perf_counter()
-        
-        # For estimators (like StringIndexer, OneHotEncoder, and StandardScaler), fit and then transform
-        if isinstance(stage, StringIndexer) or isinstance(stage, OneHotEncoder) or isinstance(stage, StandardScaler):
-            model = stage.fit(df)
-            df = model.transform(df)
-        else:  # For transformers (like VectorAssembler), just transform
-            df = stage.transform(df)
-
-        end_time = time.perf_counter()
-        stage_times.append((f"Preprocessing Stage {i}: " + stage.__class__.__name__, end_time - start_time))
-        total_time += (end_time - start_time)
+        time_taken, df = benchmark_preprocessing_stage(stage, df)
+        stage_times.append((f"Preprocessing Stage {i}: " + stage.__class__.__name__, time_taken))
+        total_time += (time_taken)
         if f"Preprocessing Stage {i}: " + stage.__class__.__name__ not in results:
             results[f"Preprocessing Stage {i}: " + stage.__class__.__name__] = list()
         print(f"Finished the following stage: {stage.__class__.__name__}")
@@ -86,12 +102,10 @@ for iter in range (50):
                             estimatorParamMaps=paramGrid,
                             evaluator=MulticlassClassificationEvaluator(labelCol=label_col, predictionCol="prediction"),
                             numFolds=10)
-
-    start_time = time.perf_counter()
-    cvModel = crossval.fit(df)
-    end_time = time.perf_counter()
-    stage_times.append(("CrossValidator", end_time - start_time))
-    total_time += (end_time - start_time)
+    
+    time_taken, cvModel = benchmark_validator_stage(crossval, df)
+    stage_times.append(("CrossValidator", time_taken))
+    total_time += (time_taken)
     if "CrossValidator" not in results:
             results["CrossValidator"] = list()
     print(f"Finished the following stage: CrossValidator")
@@ -120,4 +134,3 @@ df = pd.DataFrame(results)
 
 df.to_csv(f"./spark-data/results_num_node_{scale}.csv", index=False) #docker only 
 print(total_time)
-# df.to_csv(f"results_num_node_{scale}.csv", index=False) #local only

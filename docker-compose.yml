@@ -4,9 +4,7 @@ services:
   spark-master:
     container_name: spark-master
     image: my-spark-image
-    command: spark/bin/spark-class org.apache.spark.deploy.master.Master -h spark-master #> 
-      # sh -c "spark/bin/spark-class org.apache.spark.deploy.master.Master -h spark-master &&
-      #       python3 /opt/application/pipeline.py"
+    command: spark/bin/spark-class org.apache.spark.deploy.master.Master -h spark-master
     hostname: spark-master
     ports:
       - "7077:7077"
@@ -14,7 +12,10 @@ services:
     volumes:
       - ./data:/opt/application/spark-data  # Mount for CSV output and other data files
       - ./pipeline.py:/opt/application/pipeline.py  # Mount for your Python script
+      - ./pipeline_w_prof.py:/opt/application/pipeline_w_prof.py  # Mount for your Python script
+      - ./pipeline_w_prof2.py:/opt/application/pipeline_w_prof2.py  # Mount for your Python script
       - ./diabetes_prediction_dataset.csv:/opt/application/diabetes_prediction_dataset.csv #Mount for your csv data
+      - ./_profiles:/opt/application/_profiles
     environment:
       - SCALE=${SCALE}
     # deploy:
@@ -28,15 +29,16 @@ services:
 
   spark-worker:
     image: my-spark-image
-    command: spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077 #>
-      # sh -c "spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077 &&
-      #       python3 /opt/application/pipeline.py"
+    command: spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
     depends_on:
       - spark-master
     volumes:
       - ./data:/opt/application/spark-data  # Mount for CSV output and other data files
       - ./pipeline.py:/opt/application/pipeline.py  # Mount for your Python script
+      - ./pipeline_w_prof.py:/opt/application/pipeline_w_prof.py  # Mount for your Python script
+      - ./pipeline_w_prof2.py:/opt/application/pipeline_w_prof2.py  # Mount for your Python script
       - ./diabetes_prediction_dataset.csv:/opt/application/diabetes_prediction_dataset.csv #Mount for your csv data
+      - ./_profiles:/opt/application/_profiles
     environment:
       - SCALE=${SCALE}
     # deploy:
@@ -44,6 +46,6 @@ services:
     #     limits:
     #       cpus: "1"
     #       memory: 1G
-        # reservations:
-        #   cpus: "0.25"
-        #   memory: 512M
+    #     reservations:
+    #       cpus: "0.25"
+    #       memory: 512M
