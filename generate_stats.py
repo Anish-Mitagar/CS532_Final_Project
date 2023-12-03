@@ -35,7 +35,7 @@ def calculate_statistics_for_directory(directory_path, output_file_path):
     return combined_stats_df
 
 directory_path = "./data"  
-output_file_path = './output_statistics.csv'   
+output_file_path = './data/output_statistics.csv'   
 
 # Calculate and print the statistics
 stats_data = calculate_statistics_for_directory(directory_path, output_file_path)

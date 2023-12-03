@@ -2,6 +2,10 @@
 
 ### Team Members: Anish Mitagar, Scott Fortune, Karishma Manchanda, Sugun Yadla
 
+#### Presentation Link: https://www.youtube.com/watch?v=7hOtzbmHNoM
+
+#### Note: The terms nodes and workers are used interchangably in this repo
+
 ## ML Pipeline Execution Time versus Horizontal Scaling
 
 This project demostrates the effect Horizontal Scaling in the Distributed Computing Set Up has on the execution time of several stages of a ML Pipeline. Every stage of the ML Pipeline ulilizes a Spark Job/Function from the PySpark library.
@@ -26,7 +30,7 @@ docker build -t my-spark-image .
 
 ## Instructions for Running 
 
-**Step 1:** To run the experiment, run the following shell script.
+**Step 1:** To run the experiment, run the following shell script. Outputs to "data" folder.
 
 ```
 ./run_tests.sh
@@ -35,13 +39,13 @@ docker build -t my-spark-image .
 
 **NOTE 2:** to adjust number of trials, go to line 30 in pipeline.py and change the number inside ```range(<int>)```
 
-**Step 2:** To generate graphs of the execution time distributions of the pipeline stages per experiment run
+**Step 2:** To generate graphs of the execution time distributions of the pipeline stages per experiment run. Outputs to "data" folder.
 
 ```
 python3 generate_visuals.py
 ```
 
-**Step 3:** To generate graphs comparing the execution time distributions of the pipeline stages for two experiments run
+**Step 3:** To generate graphs comparing the execution time distributions of the pipeline stages for two experiments run. Outputs to "data" folder.
 
 ```
 python3 comparision_visuals.py <int> <int>
@@ -50,7 +54,7 @@ python3 comparision_visuals.py <int> <int>
 **EXAMPLE** If want to compare the execution time distrubutions between number workers/nodes equalling 2 versus number workers/nodes equalling 4, then type ```python3 comparision_visuals.py 2 4```
 
 
-**Step 4:** To generate basic statistics for the execution times of the pipeline stages per experiment run
+**Step 4:** To generate basic statistics for the execution times of the pipeline stages per experiment run. Outputs to "data" folder.
 
 ```
 python3 generate_stats.py
