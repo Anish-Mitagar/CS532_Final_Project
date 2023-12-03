@@ -1,5 +1,4 @@
 import time
-
 from pyspark.sql import SparkSession
 from pyspark.ml.feature import VectorAssembler, StandardScaler, StringIndexer, OneHotEncoder
 from pyspark.ml.classification import RandomForestClassifier
@@ -7,23 +6,19 @@ from pyspark.ml.tuning import ParamGridBuilder, CrossValidator
 from pyspark.ml.evaluation import MulticlassClassificationEvaluator
 import pandas as pd
 import os
-
 from profilerdeck import profile
 
 
 @profile
 def benchmark_preprocessing_stage(stage, df):
     start_time = time.perf_counter()
-        
     # For estimators (like StringIndexer, OneHotEncoder, and StandardScaler), fit and then transform
     if isinstance(stage, StringIndexer) or isinstance(stage, OneHotEncoder) or isinstance(stage, StandardScaler):
         model = stage.fit(df)
         df = model.transform(df)
     else:  # For transformers (like VectorAssembler), just transform
         df = stage.transform(df)
-
     end_time = time.perf_counter()
-
     return end_time - start_time, df
 
 @profile
@@ -35,21 +30,17 @@ def benchmark_validator_stage(crossval, df):
 
 results = {}
 scale = os.getenv('SCALE', "local")
-
 os.chdir("/opt/application") #docker only
 
 for iter in range (1):
 
     print(f"Running iter {iter + 1}")
 
-   
-
     # Initialize Spark Session
     spark = SparkSession.builder.appName("DiabetesPredictionPipeline").getOrCreate()
 
     # Load the dataset
-    data_path = "file:///opt/application/diabetes_prediction_dataset.csv" #docker only
-    #data_path = "diabetes_prediction_dataset.csv" #local only
+    data_path = "file:///opt/application/diabetes_prediction_dataset.csv" 
     df = spark.read.csv(data_path, header=True, inferSchema=True)
 
     # Columns for features and label
@@ -75,7 +66,6 @@ for iter in range (1):
     assembler_inputs = [c + "classVec" for c in categorical_features] + ["scaled_num_features"]
     assembler = VectorAssembler(inputCols=assembler_inputs, outputCol="features")
     stages += [num_assembler, scaler, assembler]
-
 
     total_time = 0
     i = 1
@@ -131,6 +121,5 @@ for iter in range (1):
 df = pd.DataFrame(results)
 
 # Save to a CSV file
-
-df.to_csv(f"./spark-data/results_num_node_{scale}.csv", index=False) #docker only 
+df.to_csv(f"./spark-data/results_num_node_{scale}.csv", index=False) 
 print(total_time)

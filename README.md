@@ -4,41 +4,82 @@
 
 ## ML Pipeline Execution Time versus Horizontal Scaling
 
-This project demostrates the effect Horizontal Scaling in the Distributed Computing Set Up has on the execution time of several stages of the ML Pipeline. Every stage of the ML Pipeline ulilizes a Spark Job/Function from the PySpark library.
-
-![Alt text](https://www.matridtech.net/wp-content/uploads/2020/07/Horizontal-Scaling.png)
-
-## The ML Pipeline Stage
-
-### Data Preprocessing
-
-### Model Training
-
-#### The Dataset: Diabetes Diagnosis
-
-![Alt text](https://scitechdaily.com/images/Diabetes-Treatments.jpg)
-
-#### The Model Family: Random Forests (Classification)
-The Random Forest machine learning model is an ensemble learning method widely used for both classification and regression tasks. This model operates by constructing a multitude of decision trees during training, which are used to make predictions. Each tree in the 'forest' is built from a random sample of the data, and at each decision point within the tree, a random subset of features is considered. This randomness not only helps in creating a diverse set of trees but also significantly reduces the risk of overfitting, a common issue where a model performs well on training data but poorly on unseen data. In practice, for classification tasks, each tree 'votes' for a class, and the class with the most votes is chosen as the model's prediction. For regression tasks, the model averages the outputs of different trees.
-
-![Alt text](https://miro.medium.com/v2/resize:fit:1200/1*hmtbIgxoflflJqMJ_UHwXw.jpeg)
-
-One of the key strengths of Random Forest is its versatility and robustness across various types of data, be it categorical or numerical. It generally requires less preprocessing of data and is easier to tune compared to many other algorithms. Additionally, Random Forest models provide valuable insights into the importance of different features in predicting the outcome, which can be crucial in understanding and interpreting the results. Due to these attributes, Random Forests are highly regarded for their strong performance and are a popular choice for a wide range of machine learning applications.
-#### Hyperparameter Grid Search + K-Fold Cross Validation
-
-![Alt text](https://knowledge.dataiku.com/latest/_images/hyperparameter-search.png)
-
-![Alt text](https://i1.wp.com/sqlrelease.com/wp-content/uploads/2021/07/K-fold-cross-validation-1.jpg?fit=2290%2C928&ssl=1)
-#### Evaluation and Selection
+This project demostrates the effect Horizontal Scaling in the Distributed Computing Set Up has on the execution time of several stages of a ML Pipeline. Every stage of the ML Pipeline ulilizes a Spark Job/Function from the PySpark library.
 
 ## Experiment Setup
 
+Step 1: Have a Unix Based Machine
+
+Step 2: Install Docker
+
+Step 3: Add these packages to your python envionment
+```
+pip3 install pandas numpy matplotlib scipy snakeviz 
+```
+
+Step 4: Start Docker daemon by starting Docker application
+
+Step 5: Build Docker Image
+```
+docker build -t my-spark-image .     
+```
+
 ## Instructions for Running 
+
+**Step 1:** To run the experiment, run the following shell script.
 
 ```
 ./run_tests.sh
 ```
+**NOTE 1:** to adjust the over which number of workers/node to run the workload on, go to line 3 in run_tests.sh and change the numbers
+
+**NOTE 2:** to adjust number of trials, go to line 30 in pipeline.py and change the number inside ```range(<int>)```
+
+**Step 2:** To generate graphs of the execution time distributions of the pipeline stages per experiment run
 
 ```
 python3 generate_visuals.py
 ```
+
+**Step 3:** To generate graphs comparing the execution time distributions of the pipeline stages for two experiments run
+
+```
+python3 comparision_visuals.py <int> <int>
+```
+
+**EXAMPLE** If want to compare the execution time distrubutions between number workers/nodes equalling 2 versus number workers/nodes equalling 4, then type ```python3 comparision_visuals.py 2 4```
+
+
+**Step 4:** To generate basic statistics for the execution times of the pipeline stages per experiment run
+
+```
+python3 generate_stats.py
+```
+
+## Our Results given our hardware setup
+
+**Machine:** 2021 16 inch Macbook Pro with M1 Max and 32GB RAM
+
+Docker Resource Allocation settings:
+* CPU limit: 9
+* Memory limit: 20 GB
+* Swap: 4 GB
+
+Experiment Setups: We ran the workload 50 times each for number of workers/nodes equalling 1, 2, 3, 4, 5, 6, 7, and 8.
+
+Our data and graphs can be found the in the official_results folder.
+
+**NOTE** In the inital implementation of pipeline.py, our time recordings were not "exact" because it took into account the small overhead of the master node starting and stopping the timer before and after running a Pyspark function. We found this out using the profiler code (```profilerdeck.py```) provided by TA Andy Zane. We want to find the pure runtimes of the Pyspark functions (the stages of the pipeline) running in a distributed manner amongst the workers/nodes.
+
+So our official with the time recording including the small amount of master node overhead is placed under the official_results/with_master_timer_overhead directory.
+
+Our official with the time recording excluding master node overhead using the current implementation of pipeline.py is placed under the official_results/without_master_timer_overhead directory. This the most correct/accurate results.
+
+You will see the the results in both subdirectories are hardly different, and the overall trends are the same.
+
+## Playing with the Function Profiler
+To see the small time difference in between recording times with account for small master node overhead from starting and stopping timers, look at the csv files in subdirectories official_results/profiler_investigation/method_1 and official_results/profiler_investigation/method_2 where method 2 are the results obtain without the small master node overhead. To see that these results are accurate, compare the second to last value in the csv file to the top value in .prof file. To view the .prof file, run ```snakeviz <path to .prof file>```.
+
+To actually play with the profiler, use ```run_tests_w_prof.sh``` with ```pipeline_w_prof.py``` in a similar manner to the instructions above.
+
+To actually play with the profiler, use ```run_tests_w_prof2.sh``` with ```pipeline_w_prof2.py``` in a similar manner to the instructions above.

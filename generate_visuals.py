@@ -5,9 +5,6 @@ import matplotlib.pyplot as plt
 import scipy.stats as st
 import re
 
-# This is a mock-up function to demonstrate the process.
-# In practice, you should replace the 'directory_path' with your actual directory path.
-
 def plot_and_save_distributions(directory_path):
     # Loop through each CSV file in the directory
     for filename in os.listdir(directory_path):
@@ -37,11 +34,8 @@ def plot_and_save_distributions(directory_path):
             plt.tight_layout()
 
             # Save the plot to a file
-            plot_filename = f"plot_{filename[:-4]}.png"  # Remove '.csv' and add '.png'
+            plot_filename = f"plot_{filename[:-4]}.png" 
             plt.savefig(os.path.join(directory_path, plot_filename))
-            plt.close()  # Close the plot to avoid displaying it in the notebook
+            plt.close() 
 
-# Example usage (replace with your directory path)
 plot_and_save_distributions("./data") 
-
-"Function ready to use. Replace the directory path with the actual path where your CSV files are located."

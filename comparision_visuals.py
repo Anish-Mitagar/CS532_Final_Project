@@ -7,7 +7,7 @@ import os
 import sys
 
 # List of CSV file paths
-csv_files = glob.glob(os.getcwd() + "/data" + '/*.csv')  # Modify this path to your CSV files directory
+csv_files = glob.glob(os.getcwd() + "/data" + '/*.csv')  
 
 if __name__ == "__main__":
     if len(sys.argv) == 3:
@@ -27,7 +27,6 @@ if __name__ == "__main__":
 
         # Read each CSV file and store data for each column
         data_per_column = {column: [] for column in columns}
-
 
         num_trails = None
 

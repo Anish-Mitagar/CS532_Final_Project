@@ -1,3 +1,4 @@
+# Clear profiles folder
 rm -rf "./_profiles"/*
 for scale in 1
 do
